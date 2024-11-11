@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Raw Vue</title>
+</head>
+<body>
+<center>
+    <h1 id="text" class="text">Hello Vue</h1>
+    <div id="app">
+        <label for="value_a">value A: </label>
+        <input v-model="value_a" id="name" type="number">
+        <br>
+        <br>
+        <label for="value_b">value B: </label>
+        <input v-model="value_b" id="value_b" type="number">
+        <br>
+        <br>
+        <input @click="sum()" type="button" value="Sum">
+        <input @click="minus()" type="button" value="Minus">
+        <input @click="multiply()" type="button" value="Multiply">
+        <input @click="divide()" type="button" value="Divide">
+        <br>
+        <h4>Result: A {{ operator }} B: {{ result }}</h4>
+    </div>
+</center>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</body>
+<script>
+    const {createApp} = Vue
+
+    createApp({
+        data() {
+            return {
+                name: "dara",
+                value_a: 0,
+                value_b: 0,
+                result: 0,
+                operator: '+',
+            }
+        },
+        methods: {
+            sum() {
+                this.operator = '+'
+                this.result = this.value_a + this.value_b
+            },
+            minus() {
+                this.operator = '-'
+                this.result = this.value_a - this.value_b
+            },
+            multiply() {
+                this.operator = 'x'
+                this.result = this.value_a * this.value_b
+            },
+            divide() {
+                this.operator = '/'
+                this.result = this.value_a / this.value_b
+            }
+        }
+    }).mount('#app')
+</script>
+</html>

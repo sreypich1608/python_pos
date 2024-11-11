@@ -1,0 +1,491 @@
+{% extends 'admin/layout.html' %}
+
+{% block style %}
+    <style>
+        .table-overflow {
+            white-space: nowrap; /* Prevents text from wrapping */
+            overflow: hidden; /* Hides the overflow */
+            text-overflow: ellipsis; /* Adds an ellipsis ('...') if the text overflows */
+            max-width: 100px; /* Optional: Set a max width for the cells */
+        }
+
+        .mystyle {
+            color: #40C4FF;
+            font-weight: 300;
+            margin-left: 10px;
+            font-size: 18px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div id="app" class="page-inner">
+        <div class="align-items-left">
+            <h3 class="fw-bold">Product</h3>
+        </div>
+        {#    pop up when click add product start#}
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog" style="max-width: 66.66vw;">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 v-if="status == 'add'" class="modal-title fs-5" id="staticBackdropLabel">Add New
+                            Product</h1>
+                        <h1 v-if="status == 'edit'" class="modal-title fs-5" id="staticBackdropLabel">Edit Product</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="mb-3 mx-3">
+                                <!-- Product Name in its own row -->
+                                <label class="fw-bold form-label">Product Name</label>
+                                <input v-model="form.name" type="text" class="form-control">
+                            </div>
+                            <div class="row mx-3">
+                                <!-- Cost and Price in the same row -->
+                                <div class="col">
+                                    <label class="fw-bold form-label">Cost</label>
+                                    <input v-model="form.cost" type="text" class="form-control" placeholder="0.00">
+                                </div>
+                                <div class="col">
+                                    <label class="fw-bold form-label">Price</label>
+                                    <input v-model="form.price" type="text" class="form-control" placeholder="0.00">
+                                </div>
+                                <div class="col">
+                                    <label class="fw-bold form-label">Qty</label>
+                                    <input v-model="form.qty" type="text" class="form-control" placeholder="0.00">
+                                </div>
+                            </div>
+                            <div class="row mx-3 mt-3">
+                                <!-- Category and Unit in the same row -->
+                                <div class="col">
+                                    <label class="fw-bold form-label">Category</label>
+                                    <select v-model="form.category" class="form-select">
+                                        <option value="null" disabled>Please select</option>
+                                        <option v-for="(item, index) in category_list" :key="'category_list'+index"
+                                                :value="item.id">[[ item.name ]]
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label class="fw-bold form-label">Unit</label>
+                                    <select v-model="form.unit" class="form-select">
+                                        <option value="null" disabled>Please select</option>
+                                        <option v-for="(item, index) in unit_list" :key="'unit_list'+index"
+                                                :value="item.id">[[ item.name ]]
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row mx-3 mt-3">
+                                <!-- Brand and Tag in the same row -->
+                                <div class="col">
+                                    <label class="fw-bold form-label">Brand</label>
+                                    <select v-model="form.brand" class="form-select">
+                                        <option value="null" disabled>Please select</option>
+                                        <option v-for="(item, index) in brand_list" :key="'brand_list'+index"
+                                                :value="item.id">[[ item.name ]]
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="col">
+                                    <label class="fw-bold form-label">Tag</label>
+                                    <select ref="tagSelect" class="choices-multiple" multiple v-model="form.tag">
+                                        <option v-for="tag in tag_list" :key="tag.id" :value="tag.id">
+                                            [[ tag.name ]]
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" @click="closeModal()">
+                            <i class="fas fa-times"></i>
+                            Close
+                        </button>
+                        <button @click="onSave()" v-if="status == 'add'" type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-save"></i>
+                            Save
+                        </button>
+                        <button @click="edit()" v-if="status == 'edit'" type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-save"></i>
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal product Detail -->
+        <div class="modal fade" id="myDetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Product Detail</h1>
+                    </div>
+                    <div class="modal-body p-3">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-4 text-end">ID :</div>
+                                <div class="col-8 text-primary">[[form.id]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Name :</div>
+                                <div class="col-8 text-primary">[[form.name]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Cost :</div>
+                                <div class="col-8 text-primary">[[form.cost]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Price :</div>
+                                <div class="col-8 text-primary">[[form.price]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Qty :</div>
+                                <div class="col-8 text-primary">[[form.qty]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Category :</div>
+                                <div class="col-8 text-primary">[[form.category]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Unit :</div>
+                                <div class="col-8 text-primary">[[form.unit]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Brand :</div>
+                                <div class="col-8 text-primary">[[form.brand]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Tag :</div>
+                                <div class="col-8 text-primary">[[form.tag.map(tag => tag.name).join(', ') ]]</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" @click="closeDetail()">
+                            <i class="fas fa-times"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#    pop up when click add product end#}
+
+        {#    product table start#}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <button class="btn btn-sm btn-outline-primary" @click="openModal()">
+                            <i class="fas fa-plus-circle"></i>
+                            Add New
+                        </button>
+                    </div>
+                    <div class="card-body p-0 m-0">
+                        <div class="table-responsive fs-6">
+                            <table class="table table-head-bg-primary table-striped p-0 m-0">
+                                <thead>
+                                <tr>
+                                    <th class="table-overflow">No.</th>
+                                    <th class="table-overflow">Name</th>
+                                    <th class="table-overflow">Cost</th>
+                                    <th class="table-overflow">Price</th>
+                                    <th class="table-overflow">Qty</th>
+                                    <th class="table-overflow">Category</th>
+                                    <th class="table-overflow">Unit</th>
+                                    <th class="table-overflow">Brand</th>
+                                    <th class="table-overflow">Tag</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(item,index) in product_list" :key="'product_list'+index">
+                                    <td class="table-overflow">[[ index+1 ]]</td>
+                                    <td class="table-overflow">[[ item.name ]]</td>
+                                    <td class="table-overflow">[[ item.cost ]]</td>
+                                    <td class="table-overflow">[[ item.price ]]</td>
+                                    <td class="table-overflow">[[ item.qty ]]</td>
+                                    <td class="table-overflow">[[ item.category ]]</td>
+                                    <td class="table-overflow">[[ item.unit ]]</td>
+                                    <td class="table-overflow">[[ item.brand ]]</td>
+                                    <td class="table-overflow">[[ item.tag.map(tag => tag.name).join(', ') ]]</td>
+                                    <td class="text-center">
+                                        <button @click="detail(item)" class="btn btn-sm btn-outline-success mr-2">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button @click="getEdit(item)" class="btn btn-sm btn-outline-primary mx-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button @click="deleteRecord(item.id)"
+                                                class="btn btn-sm btn-outline-danger mr-2">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#    product table end#}
+    </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        const {createApp} = Vue
+        createApp({
+            delimiters: ['[[', ']]'],
+            created() {
+                this.fetchData()
+            },
+            mounted() {
+            },
+            data() {
+                return {
+                    product_list: [],
+                    tag_list: [],
+                    unit_list: [],
+                    brand_list: [],
+                    category_list: [],
+                    tagChoices: null,
+                    form:
+                        {
+                            'id': null,
+                            'name': null,
+                            'cost': null,
+                            'price': null,
+                            'qty': null,
+                            'category': null,
+                            'unit': null,
+                            'brand': null,
+                            'tag': [],
+                        }
+                    ,
+                    status: 'add',
+                }
+            },
+            methods: {
+                fetchData() {
+                    let vm = this
+                    $.LoadingOverlay("show");
+                    let api_url = "http://127.0.0.1:5000/admin/get-product"
+                    axios.get(api_url)
+                        .then(function (response) {
+                            // handle success
+                            vm.product_list = response.data.product_list
+                            vm.category_list = response.data.category_list
+                            vm.brand_list = response.data.brand_list
+                            vm.tag_list = response.data.tag_list
+                            vm.unit_list = response.data.unit_list
+                            $.LoadingOverlay("hide");
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        })
+                },
+                initChoices() {
+                    // Initialize or update the Choices instance
+                    this.$nextTick(() => {
+                        const element = document.querySelector(".choices-multiple");
+                        if (element) {
+                            // Destroy existing Choices instance if it exists
+                            if (this.tagChoices) {
+                                this.tagChoices.destroy();
+                            }
+                            this.tagChoices = new Choices(element, {
+                                removeItemButton: true,
+                                placeholderValue: "Select tags",
+                                maxItemCount: -1, // Allows multiple tag selections
+                            });
+                        }
+                    });
+                },
+                onSave() {
+                    let vm = this
+                    if (this.form.name == null || this.form.name == '') {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Name Field cannot empty",
+                        });
+                        return
+                    }
+                    $.LoadingOverlay("show");
+                    let input = this.form
+                    let api_url = "http://127.0.0.1:5000/admin/create-product"
+                    axios.post(api_url, input)
+                        .then(function (response) {
+                            // handle success
+                            vm.fetchData()
+                            $.LoadingOverlay("hide");
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        })
+
+                    this.clearForm()
+                },
+                edit() {
+                    let vm = this
+                    if (this.form.name == null || this.form.name == '') {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Name Field cannot empty",
+                        });
+                        return
+                    }
+                    $.LoadingOverlay("show");
+                    let input = this.form
+                    let api_url = "http://127.0.0.1:5000/admin/update-product"
+                    axios.post(api_url, input)
+                        .then(function (response) {
+                            // handle success
+                            vm.fetchData()
+                            $.LoadingOverlay("hide");
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        })
+
+                    this.clearForm()
+                },
+                detail(item) {
+                    this.status = 'edit'
+                    this.form.id = item.id
+                    this.form.name = item.name
+                    this.form.cost = item.cost
+                    this.form.price = item.price
+                    this.form.qty = item.qty
+                    this.form.category = item.category
+                    this.form.unit = item.unit
+                    this.form.brand = item.brand
+                    this.form.tag = item.tag
+                    $('#myDetail').modal('show');
+                },
+                closeDetail() {
+                    this.clearForm()
+                    $('#myDetail').modal('hide');
+                },
+                openModal() {
+                    this.status = 'add'
+                    $('#myModal').modal('show');
+                },
+                closeModal() {
+                    this.clearForm()
+                    $('#myModal').modal('hide');
+                },
+                getEdit(item) {
+                    console.log("Item Tags:", item.tag);
+                    // Map brand name to ID
+                    this.brand_list.forEach(brand => {
+                        if (brand.name === item.brand)
+                            this.form.brand = brand.id;
+                    });
+
+                    // Map unit name to ID
+                    this.unit_list.forEach(unit => {
+                        if (unit.name === item.unit)
+                            this.form.unit = unit.id;
+                    });
+
+                    // Convert tag objects to IDs for Choices.js pre-selection
+                    this.form.tag = item.tag.map(tag => tag.id);  // Extract tag IDs
+
+                    console.log("Selected tag IDs:", this.form.tag); // Debugging line
+
+                    // Map category name to ID
+                    this.category_list.forEach(category => {
+                        if (category.name === item.category)
+                            this.form.category = category.id;
+                    });
+
+                    // Set form status and fields
+                    this.status = 'edit';
+                    this.form.id = item.id;
+                    this.form.name = item.name;
+                    this.form.cost = item.cost;
+                    this.form.price = item.price;
+                    this.form.qty = item.qty;
+                    // Initialize Choices.js and pre-select tags
+                    this.$nextTick(() => {
+                        // Now set the choice values
+                        this.form.tag.forEach(tagId => {
+                            this.tagChoices.setChoiceByValue(tagId.toString());
+                        });
+                    });
+                    // Show the modal
+                    $('#myModal').modal('show');
+                },
+                deleteRecord(id) {
+                    Swal.fire({
+                        title: "Do you want to delete product ?",
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: "Yes Delete !",
+                        denyButtonText: `Cancel`
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            //this.product_list.splice(index, 1);
+                            $.LoadingOverlay("show");
+                            let vm = this
+                            let api_url = "http://127.0.0.1:5000/admin/delete-product"
+                            axios.post(api_url, {product_id: id})
+                                .then(function (response) {
+                                    // handle success
+                                    vm.fetchData()
+                                    $.LoadingOverlay("hide");
+                                })
+                                .catch(function (error) {
+                                    // handle error
+                                    console.log(error);
+                                })
+                        } else if (result.isDenied) {
+                            //
+                        }
+                    });
+                },
+                clearForm() {
+                    this.status = 'add'
+                    this.form.id = null
+                    this.form.name = null
+                    this.form.cost = null
+                    this.form.price = null
+                    this.form.qty = null
+                    this.form.category = null
+                    this.form.unit = null
+                    this.form.brand = null
+                    this.form.tag = []; // Reset tags array
+                    // Clear Choices instance selections
+                    if (this.tagChoices) {
+                        this.tagChoices.removeActiveItems(); // Remove selected tags visually
+                    }
+
+                    $('#myModal').modal('hide');
+                },
+            },
+            watch: {
+                tag_list() {
+                    // Re-initialize Choices when tag_list is updated
+                    this.initChoices();
+                },
+            }
+        }).mount('#app')
+    </script>
+
+{% endblock %}

@@ -1,0 +1,314 @@
+{% extends 'admin/layout.html' %}
+
+{% block style %}
+    <style>
+        .table td, .table th {
+            white-space: nowrap; /* Prevents text from wrapping */
+            overflow: hidden; /* Hides the overflow */
+            text-overflow: ellipsis; /* Adds an ellipsis ('...') if the text overflows */
+            max-width: 150px; /* Optional: Set a max width for the cells */
+        }
+
+        .mystyle {
+            color: #40C4FF;
+            font-weight: 300;
+            margin-left: 10px;
+            font-size: 18px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div id="app" class="page-inner">
+        <div class="align-items-left">
+            <h3 class="fw-bold">Unit</h3>
+        </div>
+        {#    pop up when click add unit start#}
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 v-if="status == 'add'" class="modal-title fs-5" id="staticBackdropLabel">Add New unit</h1>
+                        <h1 v-if="status == 'edit'" class="modal-title fs-5" id="staticBackdropLabel">Edit unit</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="">
+                                <div class="row mb-3 mx-3">
+                                    <label class="fw-bold form-label">Unit Name</label>
+                                    <input v-model="form.name" type="text" class="form-control">
+                                </div>
+                                <div class="row mb-3 mx-3">
+                                    <label class="fw-bold form-label">Description</label>
+{#                                    <input v-model="form.description" type="text" class="form-control">#}
+                                    <textarea v-model="form.description" class="form-control">[[form.description]]</textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" @click="closeModal()">
+                            <i class="fas fa-times"></i>
+                            Close
+                        </button>
+                        <button @click="onSave()" v-if="status == 'add'" type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-save"></i>
+                            Save
+                        </button>
+                        <button @click="edit()" v-if="status == 'edit'" type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-save"></i>
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal unit Detail -->
+        <div class="modal fade" id="myDetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">unit Detail</h1>
+                    </div>
+                    <div class="modal-body p-3">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-4 text-end">ID :</div>
+                                <div class="col-8 text-primary">[[form.id]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Name :</div>
+                                <div class="col-8 text-primary">[[form.name]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Description :</div>
+                                <div class="col-8 text-primary">[[form.description]]</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" @click="closeDetail()">
+                            <i class="fas fa-times"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#    pop up when click add unit end#}
+
+        {#    unit table start#}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <button class="btn btn-sm btn-outline-primary" @click="openModal()">
+                            <i class="fas fa-plus-circle"></i>
+                            Add New
+                        </button>
+                    </div>
+                    <div class="card-body p-0 m-0">
+                        <div class="table-responsive fs-6">
+                            <table class="table table-head-bg-primary table-striped p-0 m-0">
+                                <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Name</th>
+                                    <th>description</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(item,index) in unit_list" :key="'unit_list'+index">
+                                    <td>[[ index+1 ]]</td>
+                                    <td>[[ item.name ]]</td>
+                                    <td>[[ item.description ]]</td>
+                                    <td>
+                                        <button @click="detail(item)" class="btn btn-sm btn-outline-secondary mr-2">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button @click="getEdit(item)" class="btn btn-sm btn-outline-primary mx-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button @click="deleteRecord(item.id)"
+                                                class="btn btn-sm btn-outline-danger mr-2">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#    unit table end#}
+    </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        const {createApp} = Vue
+        createApp({
+            delimiters: ['[[', ']]'],
+            created() {
+                this.fetchData()
+            },
+            mounted() {
+
+            },
+            data() {
+                return {
+                    unit_list: [],
+                    form:
+                        {
+                            'id': null,
+                            'name': null,
+                            'description': '',
+                        }
+                    ,
+                    status: 'add',
+                }
+            },
+            methods: {
+                fetchData() {
+                    let vm = this
+                    $.LoadingOverlay("show");
+                    let api_url = "http://127.0.0.1:5000/admin/get-unit"
+                    axios.get(api_url)
+                        .then(function (response) {
+                            // handle success
+                            vm.unit_list = response.data
+                            $.LoadingOverlay("hide");
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        })
+                },
+                onSave() {
+                    let vm = this
+                    if (this.form.name == null || this.form.name == '') {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Name Field cannot empty",
+                        });
+                        return
+                    }
+                    $.LoadingOverlay("show");
+                    let input = this.form
+                    let api_url = "http://127.0.0.1:5000/admin/create-unit"
+                    axios.post(api_url, input)
+                        .then(function (response) {
+                            // handle success
+                            vm.fetchData()
+                            $.LoadingOverlay("hide");
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        })
+
+                    this.clearForm()
+                },
+                edit() {
+                    let vm = this
+                    if (this.form.name == null || this.form.name == '') {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Name Field cannot empty",
+                        });
+                        return
+                    }
+                    $.LoadingOverlay("show");
+                    let input = this.form
+                    let api_url = "http://127.0.0.1:5000/admin/update-unit"
+                    axios.post(api_url, input)
+                        .then(function (response) {
+                            // handle success
+                            vm.fetchData()
+                            $.LoadingOverlay("hide");
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        })
+
+                    this.clearForm()
+                },
+                detail(item) {
+                    this.status = 'edit'
+                    this.form.id = item.id
+                    this.form.name = item.name
+                    this.form.description = item.description
+                    $('#myDetail').modal('show');
+                },
+                closeDetail() {
+                    this.clearForm()
+                    $('#myDetail').modal('hide');
+                },
+                openModal() {
+                    this.status = 'add'
+                    $('#myModal').modal('show');
+                },
+                closeModal() {
+                    this.clearForm()
+                    $('#myModal').modal('hide');
+                },
+                getEdit(item) {
+                    this.status = 'edit'
+                    this.form.id = item.id
+                    this.form.name = item.name
+                    this.form.description = item.description
+                    $('#myModal').modal('show');
+                },
+                deleteRecord(id) {
+                    Swal.fire({
+                        title: "Do you want to delete unit " + id + " ?",
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: "Yes Delete !",
+                        denyButtonText: `Cancel`
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            //this.unit_list.splice(index, 1);
+                            $.LoadingOverlay("show");
+                            let vm = this
+                            let api_url = "http://127.0.0.1:5000/admin/delete-unit"
+                            axios.post(api_url, {unit_id: id})
+                                .then(function (response) {
+                                    // handle success
+                                    vm.fetchData()
+                                    $.LoadingOverlay("hide");
+                                })
+                                .catch(function (error) {
+                                    // handle error
+                                    console.log(error);
+                                })
+                        } else if (result.isDenied) {
+                            //
+                        }
+                    });
+                },
+                clearForm() {
+                    this.status = 'add'
+                    this.form.id = null
+                    this.form.name = null
+                    this.form.description = ""
+
+                    $('#myModal').modal('hide');
+                },
+            }
+        }).mount('#app')
+    </script>
+{% endblock %}

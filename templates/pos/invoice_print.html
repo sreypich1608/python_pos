@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invoice #{{ invoice.id }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        .invoice-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .invoice-header h1 {
+            margin: 0;
+        }
+
+        .invoice-details,
+        .invoice-items {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .invoice-details th,
+        .invoice-items th,
+        .invoice-details td,
+        .invoice-items td {
+            padding: 8px;
+            text-align: left;
+        }
+
+        .invoice-details {
+            border-collapse: collapse;
+        }
+
+        .invoice-details th,
+        .invoice-items th {
+            background-color: #f4f4f4;
+        }
+
+        .total-row td {
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer p {
+            font-size: 12px;
+            color: #888;
+        }
+        .mybody{width: 500px;margin: auto;}
+    </style>
+</head>
+<body>
+<div class="mybody">
+    <div class="invoice-header">
+        <h1>Invoice #{{ invoice.id }}  </h1>
+        <p>Date: {{ invoice.date }}</p>
+    </div>
+    <h2>Items</h2>
+    <table class="invoice-items">
+        <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Unit Price</th>
+            <th>Total Price</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Loop through the items and display them -->
+        {% for i in items %}
+            <tr>
+                <td>{{ i.name }}</td>
+                <td>{{ i.quantity }}</td>
+                <td>{{ i.unit_price }}</td>
+                <td>{{ i.total_price }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <div class="invoice-details">
+        <table>
+            <tr>
+                <th>Total</th>
+                <td>{{ invoice.total }}</td>
+            </tr>
+            <tr>
+                <th>Discount</th>
+                <td>{{ invoice.discount }}</td>
+            </tr>
+            <tr>
+                <th>Tax</th>
+                <td>{{ invoice.tax }}</td>
+            </tr>
+            <tr>
+                <th>Grand Total</th>
+                <td>{{ invoice.grand_total }}</td>
+            </tr>
+            <tr>
+                <th>Pay</th>
+                <td>{{ invoice.pay }}</td>
+            </tr>
+            <tr>
+                <th>Change</th>
+                <td>{{ invoice.change }}</td>
+            </tr>
+        </table>
+    </div>
+    <div class="footer">
+        <p>Thank you for your business!</p>
+    </div>
+</div>
+</body>
+</html>

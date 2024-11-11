@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>POS</title>
+    <!-- Bootstrap 5.2.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!-- Font Awesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+</head>
+<body>
+<div class="container-full">
+    <nav class="navbar bg-body-tertiary shadow-sm py-3">
+        <div class="container-fluid justify-content-center">
+            <form class="d-flex w-50" role="search">
+                <input class="form-control me-2" type="search" placeholder="Search Product" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+</div>
+<div class="row mt-3 px-1">
+    <div class="col-md-8">
+        <div class="card px-3 pb-3 shadow-sm">
+            <ul class="nav bg radius nav-pills nav-fill my-2 mx-1 gap-2 bg-light">
+                <li class="nav-item">
+                    <a class="nav-link active show"><i class="fas fa-tags"></i>All</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link"><i class="fas fa-tags"></i>All</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active show">All</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active show">All</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active show">All</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active show">All</a>
+                </li>
+            </ul>
+            <span id="items" style="height: 75vh;overflow-y: auto;overflow-x: hidden">
+                <div class="row g-3">
+                    {% for i in range(10) %}
+                        <div class="col-md-3">
+                            <div class="card" style="width: 100%;">
+                                <div class="position-relative">
+                                    <span class="bg-danger badge position-absolute" style="top: 5px;left: 5px;"> NEW </span>
+                                    <img src="https://img.freepik.com/free-vector/hand-drawn-t-shirt-outline-illustration_23-2150927674.jpg?ga=GA1.1.1502953634.1702739113&semt=ais_hybrid"
+                                         class="card-img-top" alt="...">
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title text-danger">$20.00</h5>
+                                    <p class="card-text">up the bulk of th</p>
+                                    <a href="#" class="btn btn-primary w-100">Add</a>
+                                </div>
+                            </div>
+                        </div> <!-- col // -->
+                    {% endfor %}
+                </div>
+            </span>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <span id="cart" style="height: 300px; overflow-y: auto;" class="border border-bottom border-1">
+                <table class="table table-hover shopping-cart-wrap">
+                        <thead class="text-muted">
+                            <tr class="text-center">
+                              <th scope="col">Item</th>
+                              <th scope="col" width="120">Qty</th>
+                              <th scope="col" width="120">Price</th>
+                              <th scope="col" class="text-right" width="50">Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for foo in range(10) %}
+                        <tr class="text-center">
+                            <td>
+                                <figure class="media">
+                                    <div class="img-wrap"><img src="/static/assets/img/mlane.jpg" class="rounded float-start" style="width: 50px;height: 50px;"></div>
+                                    <figcaption class="media-body">
+                                        <h6 class="title text-truncate text-center">Product name </h6>
+                                    </figcaption>
+                                </figure>
+                            </td>
+                            <td class="text-center">
+                                <div class="m-btn-group m-btn-group--pill btn-group mr-2" role="group" aria-label="...">
+                                    <button type="button" class="m-btn btn btn-primary">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button type="button" class="m-btn btn btn-outline-primary" disabled>3</button>
+                                    <button type="button" class="m-btn btn btn-primary"><i
+                                            class="fas fa-plus"></i></button>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="price-wrap">
+                                    <var class="price">$145</var>
+                                </div> <!-- price-wrap .// -->
+                            </td>
+                            <td class="text-right">
+                                <a href="" class="btn btn-outline-danger"><i class="fa-solid fa-trash"></i></a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+            </span>
+        <!-- calculate -->
+            <div class="box p-3">
+                <dl class="d-flex justify-content-between">
+                    <dt>Tax:</dt>
+                    <dd class="text-right">12%</dd>
+                </dl>
+                <dl class="d-flex justify-content-between">
+                    <dt>Discount:</dt>
+                    <input type="number" placeholder="0%" class="form-control w-50">
+                </dl>
+                <dl class="d-flex justify-content-between">
+                    <dt>Sub Total:</dt>
+                    <dd class="text-right">$215</dd>
+                </dl>
+                <dl class="d-flex justify-content-between">
+                    <dt>Total:</dt>
+                    <dd class="text-right h4 b text-danger"> $215</dd>
+                </dl>
+                <dl class="d-flex justify-content-between">
+                    <dt>Payment :</dt>
+                    <input type="number" class="form-control w-50">
+                </dl>
+                <div class="row">
+                    <div class="col-md-6">
+                        <a href="#" class="btn w-100 btn-light text-danger btn-lg btn-block"><i class="fa fa-times-circle "></i> Cancel </a>
+                    </div>
+                    <div class="col-md-6">
+                        <a href="#" class="btn w-100 btn-primary btn-lg btn-block"><i class="fa fa-shopping-bag"></i>
+                            Charge </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

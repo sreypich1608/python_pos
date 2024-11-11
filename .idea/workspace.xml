@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="2e0cb55c-c6ed-43f4-9e3f-ef6e24cf9c3a" name="Default Changelist" comment="" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Flask Main" />
+        <option value="Python Script" />
+        <option value="HTML File" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="2gAKHzZqJYHvq1WEYERgWSGwcMR" />
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/templates/pos" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\Python_flask_framwork\templates\pos" />
+      <recent name="D:\Python_flask_framwork\routes\admin" />
+      <recent name="D:\Python_flask_framwork\static\assets" />
+      <recent name="D:\Python_flask_framwork\static\pos" />
+      <recent name="D:\Python_flask_framwork\static\assets\css" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Flask server.Flask (app.py)">
+    <configuration name="pos" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Python_flask_framwork" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/routes/admin" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/routes/admin/pos.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Flask (app.py)" type="Python.FlaskServer" nameIsGenerated="true">
+      <module name="Python_flask_framwork" />
+      <option name="target" value="$PROJECT_DIR$/app.py" />
+      <option name="targetType" value="PATH" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Python_flask_framwork" type="Python.FlaskServer">
+      <module name="Python_flask_framwork" />
+      <option name="target" value="$PROJECT_DIR$/app.py" />
+      <option name="targetType" value="PATH" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.pos" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="2e0cb55c-c6ed-43f4-9e3f-ef6e24cf9c3a" name="Default Changelist" comment="" />
+      <created>1715134858717</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1715134858717</updated>
+      <workItem from="1715134859927" duration="2784000" />
+      <workItem from="1715213827338" duration="2013000" />
+      <workItem from="1715739614332" duration="3683000" />
+      <workItem from="1715744818122" duration="1533000" />
+      <workItem from="1716379245299" duration="14184000" />
+      <workItem from="1716422053143" duration="2815000" />
+      <workItem from="1716891659415" duration="8477000" />
+      <workItem from="1716943473549" duration="2634000" />
+      <workItem from="1716947464086" duration="4090000" />
+      <workItem from="1716997011750" duration="10373000" />
+      <workItem from="1717027625128" duration="627000" />
+      <workItem from="1717553819778" duration="180000" />
+      <workItem from="1720053734376" duration="1463000" />
+      <workItem from="1720576556503" duration="835000" />
+      <workItem from="1720657414456" duration="263000" />
+      <workItem from="1721174543611" duration="65000" />
+      <workItem from="1721702540336" duration="2801000" />
+      <workItem from="1721705368200" duration="2516000" />
+      <workItem from="1721707909159" duration="1727000" />
+      <workItem from="1721747609665" duration="1608000" />
+      <workItem from="1721749244285" duration="149000" />
+      <workItem from="1721749538855" duration="1435000" />
+      <workItem from="1721752554331" duration="9681000" />
+      <workItem from="1721786537365" duration="15479000" />
+      <workItem from="1723035465895" duration="2800000" />
+      <workItem from="1725934033761" duration="1861000" />
+      <workItem from="1725936523513" duration="650000" />
+      <workItem from="1725937332138" duration="1329000" />
+      <workItem from="1725974486338" duration="10838000" />
+      <workItem from="1726020205681" duration="1033000" />
+      <workItem from="1728402000160" duration="10088000" />
+      <workItem from="1728518708126" duration="3830000" />
+      <workItem from="1728699061418" duration="1956000" />
+      <workItem from="1729036763672" duration="8072000" />
+      <workItem from="1729125236968" duration="5574000" />
+      <workItem from="1729169853067" duration="21307000" />
+      <workItem from="1729214889905" duration="2164000" />
+      <workItem from="1729217556266" duration="3452000" />
+      <workItem from="1729570954930" duration="997000" />
+      <workItem from="1729648532117" duration="1455000" />
+      <workItem from="1729743979740" duration="649000" />
+      <workItem from="1730081884393" duration="3001000" />
+      <workItem from="1730247311746" duration="8212000" />
+      <workItem from="1730292350875" duration="10880000" />
+      <workItem from="1730333375577" duration="7935000" />
+      <workItem from="1730429238358" duration="1538000" />
+      <workItem from="1730730961826" duration="8252000" />
+      <workItem from="1730812391937" duration="9887000" />
+      <workItem from="1731068172454" duration="1998000" />
+      <workItem from="1731149073245" duration="11195000" />
+      <workItem from="1731222902514" duration="860000" />
+      <workItem from="1731291578199" duration="13866000" />
+      <workItem from="1731305538721" duration="159000" />
+      <workItem from="1731305779284" duration="6283000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Python_flask_framwork$Flask__app_py_.coverage" NAME="Flask (app.py) Coverage Results" MODIFIED="1731312096857" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Python_flask_framwork$pos.coverage" NAME="pos Coverage Results" MODIFIED="1731306774800" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/routes/admin" />
+    <SUITE FILE_PATH="coverage/Python_flask_framwork$Python_flask_framwork.coverage" NAME="Python_flask_framwork Coverage Results" MODIFIED="1731306918162" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>

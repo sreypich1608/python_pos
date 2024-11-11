@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>POS</title>
+    <!-- Bootstrap 5.2.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <!-- Font Awesome 6 -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+    <div class="container-full">
+        <nav class="navbar bg-body-tertiary shadow-sm py-3">
+            <div class="container-fluid justify-content-center">
+                <form class="d-flex w-50" role="search" @submit.prevent="search">
+                    <input v-model="searchBar" class="form-control me-2" type="search" placeholder="Search Product"
+                           aria-label="Search">
+                    <button @click="search" class="btn btn-outline-success" type="submit">Search</button>
+                </form>
+            </div>
+        </nav>
+    </div>
+
+    <div class="row mt-3 px-1">
+        <div class="col-md-8">
+            <div class="card px-3 pb-3 shadow-sm">
+                <div class="bg-light my-2 justify-content-between">
+                    <button @click="fetchData()" class="btn btn-outline-primary mx-1">
+                        <i class="fas fa-tags"></i>All
+                    </button>
+                    <button @click="fetchByCategoryId(category.id)" v-for="category in category_list"
+                            class="btn btn-outline-primary mx-1">
+                        <i class="fas fa-tags"></i>[[category.name]]
+                    </button>
+                </div>
+                {#                <ul class="nav bg radius nav-pills nav-fill my-2 mx-1 gap-2 bg-light">#}
+                {#                    <li @click="fetchByCategoryId(category.id)" v-for="category in category_list" class="nav-item">#}
+                {#                        <a class="nav-link active"><i class="fas fa-tags"></i>[[category.name]]</a>#}
+                {#                    </li>#}
+                {#                </ul>#}
+                <span id="items" style="height: 75vh; overflow-y: auto; overflow-x: hidden;">
+                <div class="row g-3">
+                    <div v-if="!filteredProducts.length" class="col-md-3" v-for="product in product_list"
+                         :key="'product_list' + product.id">
+                        <div class="card" style="width: 100%;">
+                            <div class="position-relative">
+                                <span class="bg-danger badge position-absolute"
+                                      style="top: 5px; left: 5px;"> NEW </span>
+                                <img :src="product.image" class="card-img-top" alt="...">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-danger">$[[ product.price ]]</h5>
+                                <p class="card-text">[[ product.name ]]</p>
+                                <button @click="addToCart(product)" class="btn btn-primary w-100">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div v-else class="col-md-3" v-for="product in filteredProducts"
+                         :key="'filteredProducts'+product.id">
+                        <div class="card" style="width: 100%;">
+                            <div class="position-relative">
+                                <span class="bg-danger badge position-absolute"
+                                      style="top: 5px; left: 5px;"> NEW </span>
+                                <img :src="product.image" class="card-img-top" alt="...">
+                            </div>
+                            <div class="card-body">
+                                <h5 class="card-title text-danger">$[[ product.price ]]</h5>
+                                <p class="card-text">[[ product.name ]]</p>
+                                <button @click="addToCart(product)" class="btn btn-primary w-100">Add</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </span>
+            </div>
+        </div>
+        {#    add product to cart#}
+        <div class="col-md-4">
+            <div class="card">
+            <span id="cart" style="height: 300px; overflow-y: auto;" class="border border-bottom border-1">
+                <table class="table table-hover shopping-cart-wrap">
+                    <thead class="text-muted">
+                        <tr class="text-center">
+                            <th scope="col">Item</th>
+                            <th scope="col" width="120">Qty</th>
+                            <th scope="col" width="120">Price</th>
+                            <th scope="col" class="text-right" width="50">Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(item, index) in cart" :key="index" class="text-center">
+                            <td>[[ item.name ]]</td>
+                            <td class="text-center">
+                                <div class="btn-group">
+                                    <button @click="decreaseQty(item)" class="btn btn-primary">
+                                        <i class="fas fa-minus"></i>
+                                    </button>
+                                    <button class="btn btn-outline-primary" disabled>[[ item.qty ]]</button>
+                                    <button @click="increaseQty(item)" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </td>
+                            <td>$[[ item.price ]]</td>
+                            <td class="text-right">
+                                <button @click="removeFromCart(index)" class="btn btn-outline-danger">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </span>
+
+                <!-- Summary & Payment -->
+                <div class="box p-3">
+                    <dl class="d-flex justify-content-between m-0">
+                        <dt>Tax:</dt>
+                        <dd class="text-right">10%</dd>
+                    </dl>
+                    <dl class="d-flex justify-content-between m-0">
+                        <dt>Discount:</dt>
+                        <input type="number" v-model="discount" placeholder="0%" class="form-control w-50">
+                    </dl>
+                    <dl class="d-flex justify-content-between m-0">
+                        <dt>Sub Total:</dt>
+                        <dd class="text-right">$[[ subTotal ]]</dd>
+                    </dl>
+                    <dl class="d-flex justify-content-between">
+                        <dt>Total:</dt>
+                        <dd class="text-right h4 b text-danger">$[[ total ]]</dd>
+                    </dl>
+                    <dl class="d-flex justify-content-between">
+                        <dt>Payment :</dt>
+                        <input type="number" v-model="payment" class="form-control w-50" placeholder="$0.0">
+                    </dl>
+                    <dl class="d-flex justify-content-between">
+                        <dt>Change:</dt>
+                        <dd class="text-right h4 b text-primary">$[[ change ]]</dd>
+                    </dl>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button @click="clearCart()" class="btn w-100 btn-light text-danger btn-lg btn-block">
+                                <i class="fa fa-times-circle"></i> Cancel
+                            </button>
+                        </div>
+                        <div class="col-md-6">
+                            <button @click="charge()" :disabled="!canCharge" class="btn w-100 btn-primary btn-lg btn-block">
+                                <i class="fa fa-shopping-bag"></i> Charge
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@3.2.45/dist/vue.global.js"></script>
+<!-- Your Vue app script here -->
+
+<script>
+    const {createApp} = Vue
+    createApp({
+        delimiters: ['[[', ']]'],
+        created() {
+        },
+        mounted() {
+            this.fetchData()
+        },
+        data() {
+            return {
+                cart: [],
+                discount: 0,
+                payment: 0,
+                product_list: [],
+                filteredProducts: [],
+                category_list: [],
+                searchBar: '',
+            }
+        },
+        computed: {
+            subTotal() {
+                return parseFloat(this.cart.reduce((total, item) => total + (item.price * item.qty), 0)).toFixed(2);
+            },
+            total() {
+                const subTotal = parseFloat(this.subTotal);
+                const tax = 0.10 * this.subTotal;
+                const discount = (this.discount / 100) * this.subTotal;
+                return parseFloat(subTotal + tax - discount).toFixed(2);
+            },
+            change() {
+                const mytotal = parseFloat(this.total)
+                if (this.payment <= 0)
+                    return 0
+                else
+                    return parseFloat(this.payment - mytotal).toFixed(2);
+            },
+            canCharge() {
+                return this.payment >= this.total;
+            }
+        },
+        methods: {
+            fetchData() {
+                let vm = this;
+                this.loading = true;
+                axios.get("http://127.0.0.1:5000/admin/get-product")
+                    .then(function (response) {
+                        vm.product_list = response.data.product_list;
+                        vm.category_list = response.data.category_list;
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+                    .finally(function () {
+                        vm.loading = false;
+                    });
+            },
+            fetchByCategoryId(category_id) {
+                let vm = this;
+                this.loading = true;
+                let api_url = "http://127.0.0.1:5000/admin/get-by-category?category_id=" + category_id
+                axios.get(api_url)
+                    .then(function (response) {
+                        vm.product_list = response.data
+                    })
+                    .catch(function (error) {
+                        console.log(error);
+                    })
+                    .finally(function () {
+                        vm.loading = false;
+                    });
+            },
+            addToCart(product) {
+                const item = this.cart.find(i => i.name === product.name);
+                if (item) {
+                    item.qty++;
+                } else {
+                    this.cart.push({...product, qty: 1});
+                }
+            },
+            increaseQty(item) {
+                item.qty++;
+            },
+            decreaseQty(item) {
+                if (item.qty > 1) item.qty--;
+                else this.removeFromCart()
+            },
+            removeFromCart(index) {
+                this.cart.splice(index, 1);
+            },
+            clearCart() {
+                this.cart = [];
+                this.discount = 0;
+                this.payment = 0;
+            },
+            search() {
+                if (this.searchBar.trim() === '') {
+                    // If searchBar is empty, clear filteredProducts to show product_list
+                    this.filteredProducts = [];
+                } else {
+                    // Filter the product list based on the search query
+                    this.filteredProducts = this.product_list.filter(product =>
+                        product.name.toLowerCase().includes(this.searchBar.toLowerCase())
+                    );
+                }
+            },
+            async charge() {
+                if (!this.canCharge) {
+                    alert("Insufficient payment!");
+                    return;
+                }
+
+                // Step 1: Prepare invoice data
+                const invoiceData = {
+                    total: this.total,
+                    discount: this.discount,
+                    tax: 0.1,
+                    payment: this.payment,
+                    change: this.change,
+                    items: this.cart.map(item => ({
+                        product_id: item.id,
+                        qty: item.qty,
+                        price: item.price,
+                        subtotal: item.price * item.qty
+                    }))
+                };
+                try {
+                    // Step 2: Insert into invoice and invoiceDetail
+                    let response = await axios.post("http://127.0.0.1:5000/invoice", invoiceData);
+
+                    if (response.data.success) {
+                        // Step 3: Update product quantities
+                        for (let item of this.cart) {
+                            await axios.put(`http://127.0.0.1:5000/product/update-qty/${item.id}`, {
+                                qty: item.qty
+                            });
+                        }
+
+                        // Step 4: Clear cart and reset payment info
+                        this.clearCart();
+
+                        // Step 5: Print the invoice
+                        this.printInvoice(response.data.invoice_id);
+
+                        alert("Transaction completed successfully!");
+                    } else {
+                        alert("Failed to complete the transaction.");
+                    }
+                } catch (error) {
+                    console.error("Error in charge process:", error);
+                    alert("An error occurred while processing the transaction.");
+                }
+            },
+
+            // Method to trigger printing the invoice
+            printInvoice(invoice_id) {
+                // You can implement a separate component or route that generates the invoice view
+                window.open(`http://127.0.0.1:5000/invoice/print/${invoice_id}`, '_blank');
+            }
+        }
+    }).mount('#app')
+</script>
+</body>
+</html>

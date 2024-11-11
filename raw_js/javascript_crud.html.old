@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Crud</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-md-4">
+                <form id="userForm" class="card pt-4 px-3 pb-5 shadow-sm">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select class="form-select" id="gender" required>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="text" class="form-control" id="phone" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="save">Save</button>
+                </form>
+            </div>
+            <div class="col-md-8">
+                <table class="table table-striped">
+                    <thead class="table-info">
+                        <th>No.</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Phone</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody id="tablebody">
+                        <!-- <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                            <td>@mdo</td>
+                            <td>@mdo</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" >Delete</button>
+                                <button class="btn btn-warning btn-sm">Edit</button>
+                            </td>
+                        </tr> -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const tablebody = document.getElementById('tablebody')
+        const userForm = document.getElementById('userForm')
+        const savebtn = document.getElementById('save')
+        let userdata = []
+        let tableindex = -1
+
+        savebtn.addEventListener('click',function(){
+            let name = document.getElementById('name').value
+            let gender = document.getElementById('gender').value
+            let phone = document.getElementById('phone').value
+            let email = document.getElementById("email").value
+
+            const user = {name, gender, phone, email}
+            if(tableindex === -1){
+                userdata.push(user)
+            }else{
+                userdata[tableindex] = user
+                tableindex = -1
+            }
+
+            userForm.reset()
+            renderTableData()
+        })
+
+        function renderTableData(){
+            tablebody.innerHTML = ``;
+            userdata.forEach((data,index)=>{
+                const row = document.createElement('tr')
+                row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${data.name}</td>
+                <td>${data.gender}</td>
+                <td>${data.phone}</td>
+                <td>${data.email}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" onclick="deleteData(${index})">Delete</button>
+                    <button class="btn btn-warning btn-sm" onclick="editData(${index})">Edit</button>
+                </td>
+                `
+                tablebody.appendChild(row)
+            })
+        }
+
+        function deleteData(index){
+            userdata.splice(index,1)
+            renderTableData()
+        }
+
+        function editData(index){
+            const user =  userdata[index]
+            document.getElementById('name').value = user.name
+            document.getElementById('gender').value = user.gender
+            document.getElementById('phone').value = user.phone
+            document.getElementById("email").value = user.email
+
+            tableindex = index
+        }
+
+
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

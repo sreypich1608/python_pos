@@ -1,0 +1,372 @@
+{% extends 'admin/layout.html' %}
+
+{% block style %}
+    <style>
+        .table-overflow {
+            white-space: nowrap; /* Prevents text from wrapping */
+            overflow: hidden; /* Hides the overflow */
+            text-overflow: ellipsis; /* Adds an ellipsis ('...') if the text overflows */
+            max-width: 150px; /* Optional: Set a max width for the cells */
+        }
+
+        .mystyle {
+            color: #40C4FF;
+            font-weight: 300;
+            margin-left: 10px;
+            font-size: 18px;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div id="app" class="page-inner">
+        <div class="align-items-left">
+            <h3 class="fw-bold">User</h3>
+        </div>
+        {#    pop up when click add user start#}
+
+        <!-- Modal -->
+        <div class="modal fade" id="myModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 v-if="status == 'add'" class="modal-title fs-5" id="staticBackdropLabel">Add New User</h1>
+                        <h1 v-if="status == 'edit'" class="modal-title fs-5" id="staticBackdropLabel">Edit User</h1>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="">
+                                <div class="row mb-3 mx-3">
+                                    <label class="fw-bold form-label">User Name</label>
+                                    <input v-model="form.name" type="text" class="form-control">
+                                </div>
+                                <div class="row mb-3 mx-3">
+                                    <label class="fw-bold form-label">Password</label>
+                                    <input v-model="form.password" type="password" class="form-control">
+                                </div>
+                                <div class="row mb-3 mx-3">
+                                    <label class="fw-bold form-label">Gender</label>
+                                    <select v-model="form.gender" class="form-select">
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+                                    </select>
+                                </div>
+                                <div class="row mb-3 mx-3">
+                                    <label class="fw-bold form-label">Phone</label>
+                                    <input v-model="form.phone" type="text" class="form-control">
+                                </div>
+                                <div class="row mb-3 mx-3">
+                                    <label class="fw-bold form-label">Email</label>
+                                    <input v-model="form.email" type="text" class="form-control">
+                                </div>
+                                <div class="row mb-3 mx-3">
+                                    <label class="fw-bold form-label">Address</label>
+                                    <textarea v-model="form.address" class="form-control">[[ form.address ]]</textarea>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" @click="closeModal()">
+                            <i class="fas fa-times"></i>
+                            Close
+                        </button>
+                        <button @click="onSave()" v-if="status == 'add'" type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-save"></i>
+                            Save
+                        </button>
+                        <button @click="edit()" v-if="status == 'edit'" type="button" class="btn btn-outline-primary">
+                            <i class="fas fa-save"></i>
+                            Update
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal User Detail -->
+        <div class="modal fade" id="myDetail" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+             aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">User Detail</h1>
+                    </div>
+                    <div class="modal-body p-3">
+                        <div class="col">
+                            <div class="row">
+                                <div class="col-4 text-end">ID :</div>
+                                <div class="col-8 text-primary">[[form.id]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Name :</div>
+                                <div class="col-8 text-primary">[[form.name]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Password :</div>
+                                <div class="col-8 text-primary">[[form.password]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Gender :</div>
+                                <div class="col-8 text-primary">[[form.gender]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Email :</div>
+                                <div class="col-8 text-primary">[[form.email]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Phone :</div>
+                                <div class="col-8 text-primary">[[form.phone]]</div>
+                            </div>
+                            <div class="row">
+                                <div class="col-4 text-end">Address :</div>
+                                <div class="col-8 text-primary">[[form.address]]</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline-danger" @click="closeDetail()">
+                            <i class="fas fa-times"></i>
+                            Close
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#    pop up when click add user end#}
+
+        {#    user table start#}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header">
+                        <button class="btn btn-sm btn-outline-primary" @click="openModal()">
+                            <i class="fas fa-plus-circle"></i>
+                            Add New
+                        </button>
+                    </div>
+                    <div class="card-body p-0 m-0">
+                        <div class="table-responsive fs-6">
+                            <table class="table table-head-bg-primary table-striped p-0 m-0">
+                                <thead>
+                                <tr>
+                                    <th>No.</th>
+                                    <th>Name</th>
+                                    <th>Password</th>
+                                    <th>Gender</th>
+                                    <th>Phone</th>
+                                    <th class="table-overflow">Email</th>
+                                    <th class="table-overflow">Address</th>
+                                    <th>Action</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="(item,index) in user_list" :key="'user_list'+index">
+                                    <td>[[ index+1 ]]</td>
+                                    <td>[[ item.name ]]</td>
+                                    <td>[[ item.password ]]</td>
+                                    <td>[[ item.gender ]]</td>
+                                    <td>[[ item.phone ]]</td>
+                                    <td class="table-overflow">[[ item.email ]]</td>
+                                    <td class="table-overflow">[[ item.address ]]</td>
+                                    <td>
+                                        <button @click="detail(item)" class="btn btn-sm btn-outline-secondary mr-2">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                        <button @click="getEdit(item)" class="btn btn-sm btn-outline-primary mx-2">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button @click="deleteRecord(item.id)"
+                                                class="btn btn-sm btn-outline-danger mr-2">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {#    user table end#}
+    </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        const {createApp} = Vue
+        createApp({
+            delimiters: ['[[', ']]'],
+            created() {
+                this.fetchData()
+            },
+            mounted() {
+
+            },
+            data() {
+                return {
+                    user_list: [],
+                    form:
+                        {
+                            'id': null,
+                            'name': null,
+                            'gender': 'M',
+                            'password': null,
+                            'phone': '+855',
+                            'email': null,
+                            'address': null
+                        }
+                    ,
+                    status: 'add',
+                }
+            },
+            methods: {
+                fetchData() {
+                    let vm = this
+                    $.LoadingOverlay("show");
+                    let api_url = "http://127.0.0.1:5000/admin/get-user"
+                    axios.get(api_url)
+                        .then(function (response) {
+                            // handle success
+                            vm.user_list = response.data
+                            $.LoadingOverlay("hide");
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        })
+                },
+                onSave() {
+                    let vm = this
+                    if (this.form.name == null || this.form.name == '') {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Name Field cannot empty",
+                        });
+                        return
+                    }
+                    $.LoadingOverlay("show");
+                    let input = this.form
+                    let api_url = "http://127.0.0.1:5000/admin/create-user"
+                    axios.post(api_url, input)
+                        .then(function (response) {
+                            // handle success
+                            vm.fetchData()
+                            $.LoadingOverlay("hide");
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        })
+
+                    this.clearForm()
+                },
+                edit() {
+                    let vm = this
+                    if (this.form.name == null || this.form.name == '') {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Oops...",
+                            text: "Name Field cannot empty",
+                        });
+                        return
+                    }
+                    $.LoadingOverlay("show");
+                    let input = this.form
+                    let api_url = "http://127.0.0.1:5000/admin/update-user"
+                    axios.post(api_url, input)
+                        .then(function (response) {
+                            // handle success
+                            vm.fetchData()
+                            $.LoadingOverlay("hide");
+                        })
+                        .catch(function (error) {
+                            // handle error
+                            console.log(error);
+                        })
+
+                    this.clearForm()
+                },
+                detail(item) {
+                    this.status = 'edit'
+                    this.form.id = item.id
+                    this.form.name = item.name
+                    this.form.gender = item.gender
+                    this.form.password = item.password
+                    this.form.phone = item.phone
+                    this.form.email = item.email
+                    this.form.address = item.address
+                    $('#myDetail').modal('show');
+                },
+                closeDetail() {
+                    this.clearForm()
+                    $('#myDetail').modal('hide');
+                },
+                openModal() {
+                    this.status = 'add'
+                    $('#myModal').modal('show');
+                },
+                closeModal() {
+                    this.clearForm()
+                    $('#myModal').modal('hide');
+                },
+                getEdit(item) {
+                    this.status = 'edit'
+                    this.form.id = item.id
+                    this.form.name = item.name
+                    this.form.gender = item.gender
+                    this.form.password = item.password
+                    this.form.phone = item.phone
+                    this.form.email = item.email
+                    this.form.address = item.address
+                    $('#myModal').modal('show');
+                },
+                deleteRecord(id) {
+                    Swal.fire({
+                        title: "Do you want to delete user " + id + " ?",
+                        showDenyButton: true,
+                        showCancelButton: false,
+                        showCancelButton: false,
+                        confirmButtonText: "Yes Delete !",
+                        denyButtonText: `Cancel`
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            //this.user_list.splice(index, 1);
+                            $.LoadingOverlay("show");
+                            let vm = this
+                            let api_url = "http://127.0.0.1:5000/admin/delete-user"
+                            axios.post(api_url, {user_id: id})
+                                .then(function (response) {
+                                    // handle success
+                                    vm.fetchData()
+                                    $.LoadingOverlay("hide");
+                                })
+                                .catch(function (error) {
+                                    // handle error
+                                    console.log(error);
+                                })
+                        } else if (result.isDenied) {
+                            //
+                        }
+                    });
+                },
+                clearForm() {
+                    this.status = 'add'
+                    this.form.id = null
+                    this.form.name = null
+                    this.form.gender = "M"
+                    this.form.password = null
+                    this.form.phone = "+855-"
+                    this.form.email = null
+                    this.form.address = null
+
+                    $('#myModal').modal('hide');
+                },
+            }
+        }).mount('#app')
+    </script>
+{% endblock %}
